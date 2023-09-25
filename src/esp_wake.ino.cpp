@@ -1,3 +1,6 @@
+# 1 "C:\\Users\\Onyxa\\AppData\\Local\\Temp\\tmp8_dkb1_m"
+#include <Arduino.h>
+# 1 "C:/Users/Onyxa/Documents/PlatformIO/Projects/esp_wake/src/esp_wake.ino"
 #include <Wire.h>
 #include "pixelFront.hpp"
 #include "wifiTime.hpp"
@@ -11,9 +14,9 @@
 #define TEMP_OFFSET 5.0f
 #include <esp_adc_cal.h>
 
-#define ADC_WIDTH          12 // ADC resolution
-#define ADC_ATTENUATION    ADC_11db // Attenuation for full-scale voltage
-#define ADC_MAX_VALUE      4095 // Maximum ADC value for 12-bit resolution
+#define ADC_WIDTH 12
+#define ADC_ATTENUATION ADC_11db
+#define ADC_MAX_VALUE 4095
 
 #include "StringUtils.hpp"
 
@@ -28,7 +31,10 @@ DacToneGenerator toneGenerator;
 EspSD esd;
 
 WiFiTimeClient timeClient;
-
+void setup();
+void ColorTVOCSet();
+void loop();
+#line 32 "C:/Users/Onyxa/Documents/PlatformIO/Projects/esp_wake/src/esp_wake.ino"
 void setup() {
   Serial.begin(9600);
   delay(1000);
@@ -48,12 +54,12 @@ void setup() {
     timeClient.setSSidPass(keyValuePair.at(0),keyValuePair.at(1));
     if(timeClient.connect()){
         timeClient.update();
-        break;  //success
+        break;
     }
   }
   timeClient.setGTimeFromNTP();
 
-  //print full date from timeLib
+
   Serial.print("Time set to: ");
   Serial.print(hour());
   Serial.print(":");
@@ -69,7 +75,7 @@ void setup() {
   Serial.print("Day of week: ");
   Serial.println(weekday());
 
-  
+
   g.setColor(VAL,0,0);
 
   ags10.begin();
@@ -132,10 +138,10 @@ void loop() {
     ColorTVOCSet();
   }
 
-  /*if(millis()-lastSwitch > switchDelay){
-    lastSwitch = millis();
-    g.hardSetNumbers(std::round(temp.temperature), std::round(humidity.relative_humidity));
-  }else{*/
+
+
+
+
     g.process();
-  //}
+
 }
