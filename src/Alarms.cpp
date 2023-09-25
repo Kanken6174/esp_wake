@@ -1,5 +1,6 @@
 #include "Alarms.hpp"
 #include "StringUtils.hpp"
+#include <TimeLib.h>
 
 void AlarmManager::begin(const EspSD& sd){
   //load alarms from SD card
@@ -32,3 +33,34 @@ void AlarmManager::begin(const EspSD& sd){
     }
   }
 }
+
+bool AlarmManager::process(){
+  int _day = day();
+  int _hour = hour();
+  int _minute = minute();
+  int _second = second();
+  bool shouldRing = false;
+  
+  //check all alarms, if their time is between previous time and current time, and are active, they should ring
+  for(Alarm alarm : alarms){
+    if(alarm.active){
+      if(alarm.day == 0 || alarm.day == _day || alarm.day == 8 || alarm.day == 9){
+        if(alarm.hour >= previousHour && alarm.hour <= _hour){
+          if(alarm.minute >= previousMinute && alarm.minute <= _minute){
+            if(alarm.second >= previousSecond && alarm.second <= _second){
+              alarm.ringing = true;
+              shouldRing = true;
+              alarm.active = false;
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  previousDay = _day;
+  previousHour = _hour;
+  previousMinute = _minute;
+
+  return shouldRing;
+};

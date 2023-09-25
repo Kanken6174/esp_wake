@@ -13,9 +13,15 @@ class Alarm{
 
 class AlarmManager{
   protected:
+    int previousDay = -1;
+    int previousHour = -1;
+    int previousMinute = -1;
+    int previousSecond = -1;
+
     std::vector<Alarm> alarms;
-    EspSD& _sd;
+    EspSD _sd;
   public:
+    AlarmManager(){}
     void begin(const EspSD& sd); // load alarms from SD
     bool process(); //check alarms, true if alarm should be ringing
     void snooze();

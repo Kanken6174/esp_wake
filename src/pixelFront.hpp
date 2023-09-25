@@ -136,9 +136,9 @@ protected:
   const unsigned long interval = 1000;
   bool tg = false;
 
-  bool _sun = false;
-
 public:
+
+  bool _sun = false;
 
   GridMaster() {
     uint8_t startIndex = 0;
@@ -180,5 +180,10 @@ public:
   void sun(){
     setColor(252,229,112);
     _sun = true;
+  }
+
+  void snooze(){
+    setColor(255,0,0);
+    _sun = false;
   }
 };

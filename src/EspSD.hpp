@@ -23,6 +23,7 @@ protected:
 
 
 public:
+  EspSD(){}
   void begin(){
     Spi02.begin(SPI_SCK_PIN, SPI_MISO_PIN, SPI_MOSI_PIN, SPI_SS_PIN);
 

@@ -10,8 +10,10 @@ void GridMaster::displayTime()
       g3->setChar(' ');
       g2->setChar(' ');
       g1->setChar(' ');
+      _pL.setBrightness(255);
     return;
     }
+    _pL.setBrightness(1);
     hardSetNumbers(hour(), minute());
   }
 

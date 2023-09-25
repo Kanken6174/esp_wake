@@ -29,9 +29,11 @@ EspSD esd;
 
 WiFiTimeClient timeClient;
 
+AlarmManager alarmManager;
+
 void setup() {
   Serial.begin(9600);
-  delay(1000);
+  delay(10000);
   Serial.println("\nInit I2C...");
 
   Wire.begin(33, 34);
@@ -79,6 +81,8 @@ void setup() {
   pinMode(37, INPUT_PULLUP);
 
   pinMode(9,ANALOG);
+
+  alarmManager.begin(esd);
 }
 
 uint64_t lastAGS10 = 0;
@@ -91,6 +95,9 @@ bool on = true;
 int tvoc = 0;
 
 void ColorTVOCSet(){
+    if(g._sun)
+      return;
+
       if(!on)
       g.setColor(0,0,0);
     else if(tvoc < 220)
@@ -121,15 +128,31 @@ void loop() {
 
     esd.logData(SD,"temperature.txt",temp.temperature,hour(),minute(),second());
     esd.logData(SD,"humidity.txt",humidity.relative_humidity,hour(),minute(),second());
+
+    if(alarmManager.process()){
+      g.sun();
+    }
   }
 
   if(!digitalRead(38)){
-    on = false;
-    g.setColor(0,0,0);
+    if(!g._sun){
+      on = false;
+      g.setColor(0,0,0);
+    }else{
+        g.snooze();
+        on = true;
+        ColorTVOCSet();
+    }
   }
   if(!digitalRead(37)){
+    if(!g._sun){
     on = true;
     ColorTVOCSet();
+    }else{
+        g.snooze();
+        on = true;
+        ColorTVOCSet();
+    }
   }
 
   /*if(millis()-lastSwitch > switchDelay){
