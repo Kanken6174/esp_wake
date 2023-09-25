@@ -51,8 +51,8 @@ void setup() {
         break;  //success
     }
   }
-  int hours,minutes,seconds;
-  timeClient.setGTimeFromNTP(hours,minutes,seconds);
+  int hours,minutes,seconds,dayOfWeek,dayOfMonth,month,year;
+  timeClient.setGTimeFromNTP(hours,minutes,seconds,dayOfWeek,dayOfMonth,month,year);
   g.setTime(hours,minutes,seconds);
   g.setColor(VAL,0,0);
 

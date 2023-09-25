@@ -147,6 +147,7 @@ public:
   uint8_t Chours = 0;
   uint8_t Cminutes = 0;
   uint8_t Cseconds = 0;
+  uint8_t CdayOfWeek = 0;
 
   GridMaster() {
     uint8_t startIndex = 0;
@@ -196,6 +197,9 @@ public:
       if(_Chours >= 24){
         _Chours %= 24;
       }
+
+
+
 
       Chours = _Chours;
       Cminutes = _Cminutes;
