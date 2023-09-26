@@ -11,6 +11,7 @@
 #define TEMP_OFFSET 5.0f
 #include <esp_adc_cal.h>
 #include "extScreen.hpp"
+#include "web.hpp"
 
 #define ADC_WIDTH          12 // ADC resolution
 #define ADC_ATTENUATION    ADC_11db // Attenuation for full-scale voltage
@@ -33,6 +34,8 @@ WiFiTimeClient timeClient;
 AlarmManager alarmManager;
 
 ExtScreen extScreen;
+
+WebConfigServer web1(esd, alarmManager);
 
 void setup() {
   Serial.begin(9600);
@@ -88,7 +91,12 @@ void setup() {
   alarmManager.begin(esd);
   extScreen.begin();
   g.snooze();
+  web1.begin();
   ColorTVOCSet();
+
+  //print ip address
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
 }
 
 uint64_t lastAGS10 = 0;
@@ -142,6 +150,8 @@ void loop() {
     //print full day, week day (letters) and month + year from on top line, and sensor data on bottom line
     extScreen.displayText("\t\t"+String(day()) + "/" + String(month()) + "/" + String(year()), 0, 0);
     extScreen.displayText("T:" + String(temp.temperature) + "C H:" + String(humidity.relative_humidity) + "%\nTVOC:" + String(tvoc) +" ppb", 0, 10);
+
+    web1.handleClient();
   }
 
   if(!digitalRead(38)){

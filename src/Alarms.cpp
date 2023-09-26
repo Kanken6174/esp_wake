@@ -2,10 +2,9 @@
 #include "StringUtils.hpp"
 #include <TimeLib.h>
 
-void AlarmManager::begin(const EspSD& sd){
-  //load alarms from SD card
-  _sd = sd;
-  String fileData = _sd.readFile(SD, "/config/alarms.kcv");
+void AlarmManager::reloadAlarms(){
+  alarms.clear();
+ String fileData = _sd.readFile(SD, "/config/alarms.kcv");
   std::vector<String> alarmLines = splitStringBy(fileData, '\n');
   for(String line : alarmLines){
     std::vector<String> parts = splitStringBy(line, ';');
@@ -43,6 +42,12 @@ void AlarmManager::begin(const EspSD& sd){
       }catch(...){}
     }
   }
+}
+
+void AlarmManager::begin(const EspSD& sd){
+  //load alarms from SD card
+  _sd = sd;
+  reloadAlarms();
 }
 
 bool AlarmManager::process(){

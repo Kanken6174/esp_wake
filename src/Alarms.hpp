@@ -25,4 +25,5 @@ class AlarmManager{
     void begin(const EspSD& sd); // load alarms from SD
     bool process(); //check alarms, true if alarm should be ringing
     void snooze();
+    void reloadAlarms();
 };
