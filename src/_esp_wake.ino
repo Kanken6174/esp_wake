@@ -10,6 +10,7 @@
 #define VAL 255
 #define TEMP_OFFSET 5.0f
 #include <esp_adc_cal.h>
+#include "extScreen.hpp"
 
 #define ADC_WIDTH          12 // ADC resolution
 #define ADC_ATTENUATION    ADC_11db // Attenuation for full-scale voltage
@@ -31,9 +32,11 @@ WiFiTimeClient timeClient;
 
 AlarmManager alarmManager;
 
+ExtScreen extScreen;
+
 void setup() {
   Serial.begin(9600);
-  delay(10000);
+  delay(5000);
   Serial.println("\nInit I2C...");
 
   Wire.begin(33, 34);
@@ -83,6 +86,9 @@ void setup() {
   pinMode(9,ANALOG);
 
   alarmManager.begin(esd);
+  extScreen.begin();
+  g.snooze();
+  ColorTVOCSet();
 }
 
 uint64_t lastAGS10 = 0;
@@ -132,11 +138,16 @@ void loop() {
     if(alarmManager.process()){
       g.sun();
     }
+    extScreen.clear();
+    //print full day, week day (letters) and month + year from on top line, and sensor data on bottom line
+    extScreen.displayText("\t\t"+String(day()) + "/" + String(month()) + "/" + String(year()), 0, 0);
+    extScreen.displayText("T:" + String(temp.temperature) + "C H:" + String(humidity.relative_humidity) + "%\nTVOC:" + String(tvoc) +" ppb", 0, 10);
   }
 
   if(!digitalRead(38)){
     if(!g._sun){
       on = false;
+      extScreen.enabled = false;
       g.setColor(0,0,0);
     }else{
         g.snooze();
@@ -147,6 +158,7 @@ void loop() {
   if(!digitalRead(37)){
     if(!g._sun){
     on = true;
+    extScreen.enabled = true;
     ColorTVOCSet();
     }else{
         g.snooze();
@@ -154,11 +166,5 @@ void loop() {
         ColorTVOCSet();
     }
   }
-
-  /*if(millis()-lastSwitch > switchDelay){
-    lastSwitch = millis();
-    g.hardSetNumbers(std::round(temp.temperature), std::round(humidity.relative_humidity));
-  }else{*/
     g.process();
-  //}
 }

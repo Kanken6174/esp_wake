@@ -18,6 +18,17 @@ void AlarmManager::begin(const EspSD& sd){
         alarm.second = parts[3].toInt();
         alarm.active = parts[4].toInt();
         alarm.ringing = false;
+        //check if alarm is in the past, if so, set it to inactive (older)
+        if(alarm.day <= day()){
+          if(alarm.hour <= hour()){
+            if(alarm.minute <= minute()){
+              if(alarm.second <= second()){
+                continue; //skip this alarm
+              }
+            }
+          }
+        }
+
         alarms.push_back(alarm);
         Serial.print("Alarm loaded:");
         Serial.print(alarm.day);
