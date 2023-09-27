@@ -148,7 +148,7 @@ void loop() {
     }
     extScreen.clear();
     //print full day, week day (letters) and month + year from on top line, and sensor data on bottom line
-    extScreen.displayText("\t\t"+String(day()) + "/" + String(month()) + "/" + String(year()), 0, 0);
+    extScreen.displayText("    "+String(day()) + "/" + String(month()) + "/" + String(year()), 0, 0);
     extScreen.displayText("T:" + String(temp.temperature) + "C H:" + String(humidity.relative_humidity) + "%\nTVOC:" + String(tvoc) +" ppb", 0, 10);
 
     web1.handleClient();

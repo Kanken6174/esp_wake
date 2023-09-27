@@ -58,17 +58,26 @@ bool AlarmManager::process(){
   bool shouldRing = false;
   
   //check all alarms, if their time is between previous time and current time, and are active, they should ring
-  for(Alarm alarm : alarms){
-    if(alarm.active){
-      if(alarm.day == 0 || alarm.day == _day || alarm.day == 8 || alarm.day == 9){
-        if(alarm.hour >= previousHour && alarm.hour <= _hour){
-          if(alarm.minute >= previousMinute && alarm.minute <= _minute){
-            if(alarm.second >= previousSecond && alarm.second <= _second){
-              alarm.ringing = true;
-              shouldRing = true;
-              alarm.active = false;
-              break;
-            }
+  for(Alarm& alarm : alarms){
+    if(alarm.ringing || !alarm.active) continue;
+    //if(alarm.day <= _day && alarm.hour <= _hour && alarm.minute <= _minute && alarm.second <= _second) continue;
+    if(alarm.day == 0 || alarm.day == _day || alarm.day == 8 || alarm.day == 9){
+      if(alarm.hour >= previousHour && alarm.hour <= _hour){
+        if(alarm.minute >= previousMinute && alarm.minute <= _minute){
+          if(alarm.second >= previousSecond && alarm.second <= _second){
+            Serial.println("--Alarm ringing!--");
+            Serial.print("Alarm time: ");
+            Serial.print(alarm.hour);
+            Serial.print(":");
+            Serial.print(alarm.minute);
+            Serial.print(":");
+            Serial.println(alarm.second);
+            Serial.print("ringing:");
+            Serial.println(alarm.ringing);
+            alarm.ringing = true;
+            shouldRing = true;
+            alarm.active = false;
+            break;
           }
         }
       }

@@ -8,7 +8,7 @@ class Alarm{
     int second;
     int day;  //1-7 week days; 0 = any day; 8 - any week day; 9 - any weekend day
     bool active;
-    bool ringing;
+    bool ringing = false;
 };
 
 class AlarmManager{
