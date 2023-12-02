@@ -55,6 +55,7 @@ void SoundI2S::off(){
 
 void SoundI2S::play(const String &filename, EspSD &sdCard) {
     if (playTaskHandle != NULL) {
+        Serial.println("Stopping because existing play task is present");
         stop();
     }
     struct PlayTaskParams {
@@ -66,16 +67,28 @@ void SoundI2S::play(const String &filename, EspSD &sdCard) {
     params->soundI2S = this;
     params->filename = filename;
     params->sdCard = &sdCard;
+
+    Serial.println("Creating play task");
     xTaskCreatePinnedToCore(playTask, "PlayTask", 10000, params, 1, &playTaskHandle, 0);
 }
 
 void SoundI2S::stop() {
-    shouldStop = true; // Set the flag
-    if (playTaskHandle != NULL) {
+    if (playTaskHandle != NULL && shouldStop == false) {
+        shouldStop = true; // Set the flag
         // Wait for the task to acknowledge the stop request
+        while (shouldStop) {
+            delay(1);
+        }
+        Serial.println("deleting play task");  
+        delay(100);  
         vTaskDelete(playTaskHandle);
+        playTaskHandle = NULL;
         Serial.println("Play task stopped, shutting down I2S amp regulator");
-        //off();
+        delay(100);
+        off();
+        shouldStop = false;
+    }else{
+        Serial.println("Play task handle is null or shouldStop is true, skipping");
     }
 }
 
@@ -91,8 +104,8 @@ void playTask(void *pvParameters) {
     File wavFile = SD.open("/" + filename, FILE_READ);
     if (!wavFile) {
         Serial.println("Failed to open WAV file");
-        delete params;
-        return;
+        //delete params;
+        while(true){yield();}
     }
 
     // Read WAV header and parse format (simplified, assuming certain format)
@@ -141,8 +154,11 @@ void playTask(void *pvParameters) {
     // Close the file and clean up
     soundI2S->off();
     wavFile.close();
-    delete params;
+    //delete params;
     Serial.println("Play task exiting");
+    soundI2S->shouldStop = false;
+
+    while(true){yield();}
 }
 
 float SoundI2S::getVolume() const {
