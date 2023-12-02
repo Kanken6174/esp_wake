@@ -76,16 +76,11 @@ void SoundI2S::stop() {
     if (playTaskHandle != NULL && shouldStop == false) {
         shouldStop = true; // Set the flag
         // Wait for the task to acknowledge the stop request
-        while (shouldStop) {
+        /*while (shouldStop) {
             delay(1);
-        }
+        }*/
         Serial.println("deleting play task");  
-        delay(100);  
-        vTaskDelete(playTaskHandle);
         playTaskHandle = NULL;
-        Serial.println("Play task stopped, shutting down I2S amp regulator");
-        delay(100);
-        off();
         shouldStop = false;
     }else{
         Serial.println("Play task handle is null or shouldStop is true, skipping");
@@ -105,6 +100,7 @@ void playTask(void *pvParameters) {
     if (!wavFile) {
         Serial.println("Failed to open WAV file");
         //delete params;
+        vTaskDelete(NULL);
         while(true){yield();}
     }
 
@@ -158,6 +154,7 @@ void playTask(void *pvParameters) {
     Serial.println("Play task exiting");
     soundI2S->shouldStop = false;
 
+    vTaskDelete(NULL);
     while(true){yield();}
 }
 
