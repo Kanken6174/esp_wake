@@ -3,7 +3,7 @@
 #include <WiFiUdp.h>
 #include <TimeLib.h>
 
-#define timeZone 0
+#define timeZone 1
 
 class WiFiTimeClient {
 public:

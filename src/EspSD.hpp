@@ -10,7 +10,7 @@ const uint8_t SPI_MOSI_PIN  = 10;
 const uint8_t SPI_MISO_PIN  = 7;
 const uint8_t SPI_SCK_PIN   = 8;
 
-const uint8_t SD_DETECT = 12;
+const uint8_t SD_DETECT = 14;
 
 class EspSD{
   File config;
@@ -41,7 +41,8 @@ public:
 
     if(!SD.begin(SPI_SS_PIN,Spi02)){
       Serial.println("Card Mount Failed");
-      while(1){}
+      return;
+      //while(1){}
     }
     Serial.println("Card mount successful");
 

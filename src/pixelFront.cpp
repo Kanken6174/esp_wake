@@ -5,7 +5,7 @@ Freenove_ESP32_WS2812 _pL = Freenove_ESP32_WS2812(LEDS_COUNT, LEDS_PIN, CHANNEL,
 
 void GridMaster::displayTime()
 {
-    if(_sun){
+    if(alarm_ringing){
       g4->setChar(' ');
       g3->setChar(' ');
       g2->setChar(' ');

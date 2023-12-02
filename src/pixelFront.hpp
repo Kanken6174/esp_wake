@@ -138,7 +138,7 @@ protected:
 
 public:
 
-  bool _sun = false;
+  bool alarm_ringing = false;
 
   GridMaster() {
     uint8_t startIndex = 0;
@@ -179,11 +179,13 @@ public:
 
   void sun(){
     setColor(252,229,112);
-    _sun = true;
+   alarm_ringing
+ = true;
   }
 
   void snooze(){
     setColor(255,0,0);
-    _sun = false;
+   alarm_ringing
+ = false;
   }
 };
