@@ -16,6 +16,7 @@ public:
 
     const int LDO_EN_PIN = 12;
     volatile bool shouldStop = false;
+    volatile bool soundJobDone = false;
 private:
 
     float volume = 0.2f;
