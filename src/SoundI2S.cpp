@@ -79,6 +79,7 @@ void SoundI2S::stop() {
         /*while (shouldStop) {
             delay(1);
         }*/
+        delay(100);
         Serial.println("deleting play task");  
         playTaskHandle = NULL;
         shouldStop = false;
@@ -137,7 +138,7 @@ void playTask(void *pvParameters) {
         size_t bytesWritten = 0;
 
         // Apply volume control
-        for (int i = 0; i < bytesRead; i += 2) {
+        for (int i = 0; i < bytesRead && !soundI2S->shouldStop; i += 2) {
             int16_t sample = (int16_t)(buffer[i] | (buffer[i + 1] << 8));
             sample = (int16_t)(sample * soundI2S->getVolume());
             buffer[i] = sample & 0xFF;

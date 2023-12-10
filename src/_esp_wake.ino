@@ -148,7 +148,7 @@ void loop() {
   if(millis()-lastAGS10 > AGS10Delay){
     lastAGS10 = millis();
     tvoc = ags10.readTVOC();
-    esd.logData(SD,"tvoc.txt",tvoc,hour(),minute(),second());
+    //esd.logData(SD,"tvoc.txt",tvoc,hour(),minute(),second());
     ColorTVOCSet();
 
     aht.getEvent(&humidity, &temp);
@@ -156,8 +156,8 @@ void loop() {
     Serial.print("Temperature: "); Serial.print(temp.temperature); Serial.println(" degrees C");
     Serial.print("Humidity: "); Serial.print(humidity.relative_humidity); Serial.println("% rH");
 
-    esd.logData(SD,"temperature.txt",temp.temperature,hour(),minute(),second());
-    esd.logData(SD,"humidity.txt",humidity.relative_humidity,hour(),minute(),second());
+    //esd.logData(SD,"temperature.txt",temp.temperature,hour(),minute(),second());
+    //esd.logData(SD,"humidity.txt",humidity.relative_humidity,hour(),minute(),second());
 
     if(alarmManager.process()){
       //g.sun();  /no more sun, it burns down the alarm clock...
@@ -176,6 +176,7 @@ void loop() {
   if(!digitalRead(38)){
     Serial.println("Button 2 clicked");
     if(!local_alarm){
+      Serial.println("Shutting screen down!");
       on = false;
       extScreen.enabled = false;
       g.setColor(0,0,0);
@@ -191,9 +192,10 @@ void loop() {
   if(!digitalRead(37)){
     Serial.println("Button 1 clicked");
     if(!local_alarm){
-    on = true;
-    extScreen.enabled = true;
-    ColorTVOCSet();
+      Serial.println("Turning screen on!");
+      on = true;
+      extScreen.enabled = true;
+      ColorTVOCSet();
     }else{
         Serial.println("Snooze");
         //g.snooze();
