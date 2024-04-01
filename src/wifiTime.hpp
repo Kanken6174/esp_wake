@@ -18,6 +18,29 @@ public:
     _password = Npasswd;
   }
 
+  
+  bool isDST() {
+    time_t now = timeClient.getEpochTime();
+    tmElements_t localTime;
+    breakTime(now, localTime);
+
+    int beginDSTDay = (31 - (5 * localTime.Year / 4 + 4) % 7);
+    int beginDSTMonth = 3;
+    int endDSTDay = (31 - (5 * localTime.Year / 4 + 1) % 7);
+    int endDSTMonth = 10;
+
+    if (localTime.Month > beginDSTMonth && localTime.Month < endDSTMonth) {
+      return true;  // DST is in effect
+    }
+    if (localTime.Month == beginDSTMonth && localTime.Day >= beginDSTDay) {
+      return true;  // DST starts
+    }
+    if (localTime.Month == endDSTMonth && localTime.Day < endDSTDay) {
+      return true;  // DST ends
+    }
+    return false;
+  }
+
   bool connect() {
     // Connect to Wi-Fi
     Serial.print("Connecting with credentials ssid: ");
@@ -37,7 +60,12 @@ public:
 
     // Initialize NTP Client
     timeClient.begin();
-    timeClient.setTimeOffset(3600*2);  // Timezone offset in seconds (1 hour = 3600 seconds)
+    int timeZoneOffsetInSeconds = 3600 * 2; // Regular time zone offset (e.g., 2 hours)
+    if (!+isDST()) {
+      timeZoneOffsetInSeconds += 3600; // Adjust for DST
+    }
+
+    timeClient.setTimeOffset(timeZoneOffsetInSeconds);
     return true;
   }
 
