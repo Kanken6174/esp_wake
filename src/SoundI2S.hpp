@@ -1,3 +1,5 @@
+#pragma once
+
 #include <Arduino.h>
 #include <driver/i2s.h>
 
@@ -9,19 +11,21 @@ public:
     const int I2S_DAT = 16;
     const int I2S_BITCLK = 17;
     const int I2S_FRAMECLK = 18;
-
     const int i2s_num = 0;
     const uint32_t sample_rate = 16000;
     const int bits_per_sample = 16;
-
     const int LDO_EN_PIN = 12;
+    
     volatile bool shouldStop = false;
-    volatile bool soundJobDone = false;
-private:
-
-    float volume = 0.2f;
-
     TaskHandle_t playTaskHandle = NULL;
+    
+    // Callback for audio visualization
+    void (*audioCallback)(int16_t* samples, uint16_t count) = nullptr;
+
+private:
+    float volume = 0.2f;
+    String currentTrack = "";
+    bool isPlayingState = false;
 
     i2s_config_t i2s_config = {
         .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
@@ -37,11 +41,12 @@ private:
     };
 
     i2s_pin_config_t pin_config = {
-        .bck_io_num = I2S_BITCLK, // Bit Clock
-        .ws_io_num = I2S_FRAMECLK, // Word Select
-        .data_out_num = I2S_DAT, // Data Out
-        .data_in_num = -1   //unused
+        .bck_io_num = I2S_BITCLK,
+        .ws_io_num = I2S_FRAMECLK,
+        .data_out_num = I2S_DAT,
+        .data_in_num = -1
     };
+
 public:
     void begin();
     void test();
@@ -52,6 +57,10 @@ public:
 
     float getVolume() const;
     void setVolume(float value);
+    
+    String getState() const;
+    String getCurrentTrack() const;
+    void updateState(bool playing, String track);
 };
 
 struct PlayTaskParams {

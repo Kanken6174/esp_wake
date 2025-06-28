@@ -8,7 +8,6 @@
 #include "ATH20.hpp"
 #include "I2C_utils.hpp"
 #include <cmath>
-#include "Alarms.hpp"
 #define VAL 255
 #define TEMP_OFFSET 5.0f
 #include <esp_adc_cal.h>
@@ -114,7 +113,7 @@ void setup() {
 
 uint64_t lastAGS10 = 0;
 uint64_t lastSwitch = 0;
-uint16_t AGS10Delay = 1600;
+uint16_t AGS10Delay = 600;
 uint16_t switchDelay = 3000;
 sensors_event_t humidity, temp;
 
@@ -156,6 +155,8 @@ void loop() {
     Serial.print("Temperature: "); Serial.print(temp.temperature); Serial.println(" degrees C");
     Serial.print("Humidity: "); Serial.print(humidity.relative_humidity); Serial.println("% rH");
 
+    web1.updateSensorData(temp.temperature, humidity.relative_humidity, tvoc);
+
     //esd.logData(SD,"temperature.txt",temp.temperature,hour(),minute(),second());
     //esd.logData(SD,"humidity.txt",humidity.relative_humidity,hour(),minute(),second());
 
@@ -169,9 +170,9 @@ void loop() {
     //print full day, week day (letters) and month + year from on top line, and sensor data on bottom line
     extScreen.displayText("    "+String(day()) + "/" + String(month()) + "/" + String(year()), 0, 0);
     extScreen.displayText("T:" + String(temp.temperature) + "C H:" + String(humidity.relative_humidity) + "%\nTVOC:" + String(tvoc) +" ppb", 0, 10);
-
-    web1.handleClient();
   }
+
+  web1.handleClient();
 
   if(!digitalRead(38)){
     Serial.println("Button 2 clicked");

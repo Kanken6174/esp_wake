@@ -1,20 +1,19 @@
-#include <WiFi.h>
-#include <WebServer.h>
+#pragma once
 
-class EspSD;
-class AlarmManager;
+#include <WebServer.h>
+#include <ArduinoJson.h>
+#include "Alarms.hpp"
 
 class WebConfigServer {
 private:
   WebServer server;
-  EspSD& sd; // Initialize an instance of your EspSD class
+  EspSD& sd; 
   AlarmManager& am;
+  float ct = 0, ch = 0; int cv = 0;
+
 public:
-  WebConfigServer(EspSD& esd, AlarmManager& alarmManager) : sd(esd), am(alarmManager) {}
-
+  WebConfigServer(EspSD& esd, AlarmManager& alarmManager);
   void begin();
-
-  void handleClient() {
-    server.handleClient();
-  }
+  void handleClient();
+  void updateSensorData(float t, float h, int v);
 };
